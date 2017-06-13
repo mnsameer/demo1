@@ -78,8 +78,7 @@
         "access": "Allow",
         "priority": 100,
         "direction": "Inbound"
-      }
-    },
+      },
     {
       "name": "web-rule",
       "properties": {
