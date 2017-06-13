@@ -8,12 +8,12 @@
          "type": "string",
          "defaultValue": "VNet1"
       },
-      "nsg1": 
+      "frontEndNSGName": 
       {
          "type": "string",
          "defaultValue": "nsg1"
       },
-      "nsg2": 
+      "backEndNSGName": 
       {
          "type": "string",
          "defaultValue": "nsg2"
@@ -83,14 +83,18 @@
                   "name": "[parameters('subnet2Name')]",
                   "properties": 
                   {
-                     "addressPrefix": "[parameters('subnet2Prefix')]"
+                     "addressPrefix": "[parameters('subnet2Prefix')]",
+                     "networkSecurityGroup": 
+                     {
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('backEndNSGName'))]"
+                     }
                   }
                }
             ],
             "securityRules": 
             [               
                {
-                  "name": "[parameters('nsg1')]",
+                  "name": "[parameters('frontEndNSGName')]",
                   "properties": 
                   {
                      "description": "Allow RDP",
@@ -105,7 +109,7 @@
                   }
                },               
                {
-                  "name": "[parameters('nsg1')]",
+                  "name": "[parameters('backEndNSGName')]",
                   "properties": 
                   {
                      "description": "Allow WEB",
