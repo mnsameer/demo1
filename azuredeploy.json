@@ -68,13 +68,10 @@
       }
     },
     {
-      "apiVersion": "2015-06-15",
+      "apiVersion": "[variables('apiVersion')]",
 "type": "Microsoft.Network/networkSecurityGroups",
 "name": "[parameters('frontEndNSGName')]",
 "location": "[resourceGroup().location]",
-"tags": {
-  "displayName": "NSG - Front End"
-},
 "properties": {
   "securityRules": [
     {
