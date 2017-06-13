@@ -29,6 +29,10 @@
     "frontEndNSGName": {
       "type": "string",
       "defaultValue": "NSG1"
+    },
+    "backEndNSGName": {
+      "type": "string",
+      "defaultValue": "NSG2"
     }
   },
   "variables": {
@@ -41,7 +45,8 @@
       "name": "[parameters('vnetName')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('frontEndNSGName'))]"
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('frontEndNSGName'))]",
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('backEndNSGName'))]"
       ],
       "properties": {
         "addressSpace": {
@@ -107,6 +112,48 @@
     }
   ]
   }
-  }
+  },
+  {
+      "apiVersion": "2015-06-15",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('backEndNSGName')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "NSG - Remote Access"
+      },
+      "properties": {
+        "securityRules": [
+          {
+            "name": "allow-frontend",
+            "properties": {
+              "description": "Allow FE Subnet",
+              "protocol": "Tcp",
+              "sourcePortRange": "*",
+              "destinationPortRange": "1433",
+              "sourceAddressPrefix": "[parameters('frontEndSubnetPrefix')]",
+              "destinationAddressPrefix": "*",
+              "access": "Allow",
+              "priority": 100,
+              "direction": "Inbound"
+            }
+          },
+          {
+            "name": "block-internet",
+            "properties": {
+              "description": "Block Internet",
+              "protocol": "*",
+              "sourcePortRange": "*",
+              "destinationPortRange": "*",
+              "sourceAddressPrefix": "*",
+              "destinationAddressPrefix": "Internet",
+              "access": "Deny",
+              "priority": 200,
+              "direction": "Outbound"
+            }
+          }
+
+        ]
+      }
+    }
   ]
 }
