@@ -4,45 +4,31 @@
   "parameters": {
     "vnetName": {
       "type": "string",
-      "defaultValue": "VNet1",
-      "metadata": {
-        "description": "VNet name"
-      }
+      "defaultValue": "VNet1"
     },
     "vnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/16",
-      "metadata": {
-        "description": "Address prefix"
-      }
+      "defaultValue": "10.0.0.0/16"
     },
     "subnet1Prefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24",
-      "metadata": {
-        "description": "Subnet 1 Prefix"
-      }
+      "defaultValue": "10.0.0.0/24"
     },
     "subnet1Name": {
       "type": "string",
-      "defaultValue": "Subnet1",
-      "metadata": {
-        "description": "Subnet 1 Name"
-      }
+      "defaultValue": "Subnet1"
     },
     "subnet2Prefix": {
       "type": "string",
-      "defaultValue": "10.0.1.0/24",
-      "metadata": {
-        "description": "Subnet 2 Prefix"
-      }
+      "defaultValue": "10.0.1.0/24"
     },
     "subnet2Name": {
       "type": "string",
-      "defaultValue": "Subnet2",
-      "metadata": {
-        "description": "Subnet 2 Name"
-      }
+      "defaultValue": "Subnet2"
+    },
+    "frontEndNSGName": {
+      "type": "string",
+      "defaultValue": "NSG1"
     }
   },
   "variables": {
@@ -60,21 +46,67 @@
             "[parameters('vnetAddressPrefix')]"
           ]
         },
+        
         "subnets": [
           {
-            "name": "subnet123",
+            "name": "[parameters('subnet1Name')]",
             "properties": {
-              "addressPrefix": "10.0.2.0/24"
+              "addressPrefix": "10.0.2.0/24",
+              "networkSecurityGroup": {
+      "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'parameters('frontEndNSGName')')]"
+      }
             }
           },
           {
-            "name": "subnet234",
+            "name": "[parameters('subnet2Name')]",
             "properties": {
               "addressPrefix": "[parameters('subnet2Prefix')]"
             }
           }
-        ]
+        ],
+
+      }
+    },
+    {
+      "apiVersion": "2015-06-15",
+"type": "Microsoft.Network/networkSecurityGroups",
+"name": "[parameters('frontEndNSGName')]",
+"location": "[resourceGroup().location]",
+"tags": {
+  "displayName": "NSG - Front End"
+},
+"properties": {
+  "securityRules": [
+    {
+      "name": "rdp-rule",
+      "properties": {
+        "description": "Allow RDP",
+        "protocol": "Tcp",
+        "sourcePortRange": "*",
+        "destinationPortRange": "3389",
+        "sourceAddressPrefix": "Internet",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 100,
+        "direction": "Inbound"
+      }
+    },
+    {
+      "name": "web-rule",
+      "properties": {
+        "description": "Allow WEB",
+        "protocol": "Tcp",
+        "sourcePortRange": "*",
+        "destinationPortRange": "80",
+        "sourceAddressPrefix": "Internet",
+        "destinationAddressPrefix": "*",
+        "access": "Allow",
+        "priority": 101,
+        "direction": "Inbound"
       }
     }
+  ]
+  }
+  }
   ]
 }
