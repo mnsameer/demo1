@@ -40,6 +40,9 @@
       "type": "Microsoft.Network/virtualNetworks",
       "name": "[parameters('vnetName')]",
       "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkSecurityGroups/', parameters('frontEndNSGName'))]"
+      ],
       "properties": {
         "addressSpace": {
           "addressPrefixes": [
