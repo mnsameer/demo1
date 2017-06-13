@@ -4,23 +4,17 @@
   "parameters": {
     "vnetName": {
       "type": "string",
-      "defaultValue": "VNet1",
-      "metadata": {
-        "description": "VNet name"
+      "defaultValue": "VNet1"
       }
     },
     "vnetAddressPrefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/16",
-      "metadata": {
-        "description": "Address prefix"
+      "defaultValue": "10.0.0.0/16"
       }
     },
     "subnet1Prefix": {
       "type": "string",
-      "defaultValue": "10.0.0.0/24",
-      "metadata": {
-        "description": "Subnet 1 Prefix"
+      "defaultValue": "10.0.0.0/24"
       }
     },
     "subnet1Name": {
@@ -32,16 +26,12 @@
     },
     "subnet2Prefix": {
       "type": "string",
-      "defaultValue": "10.0.1.0/24",
-      "metadata": {
-        "description": "Subnet 2 Prefix"
+      "defaultValue": "10.0.1.0/24"
       }
     },
     "subnet2Name": {
       "type": "string",
-      "defaultValue": "Subnet2",
-      "metadata": {
-        "description": "Subnet 2 Name"
+      "defaultValue": "Subnet2"
       }
     }
   },
