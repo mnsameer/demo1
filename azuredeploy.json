@@ -68,7 +68,7 @@
             }
           },
           {
-            "name": "subnet 234",
+            "name": "subnet234",
             "properties": {
               "addressPrefix": "[parameters('subnet2Prefix')]"
             }
