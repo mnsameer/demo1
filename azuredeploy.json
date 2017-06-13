@@ -75,7 +75,7 @@
                      "addressPrefix": "[parameters('subnet1Prefix')]",
                      "networkSecurityGroup": 
                      {
-                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('frontEndNSGName'))]"
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'frontEnd')]"
                      }
                   }
                },               
@@ -86,7 +86,7 @@
                      "addressPrefix": "[parameters('subnet2Prefix')]",
                      "networkSecurityGroup": 
                      {
-                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('backEndNSGName'))]"
+                        "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'backend')]"
                      }
                   }
                }
@@ -94,7 +94,7 @@
             "securityRules": 
             [               
                {
-                  "name": "[parameters('frontEndNSGName')]",
+                  "name": "frontend",
                   "properties": 
                   {
                      "description": "Allow RDP",
@@ -109,7 +109,7 @@
                   }
                },               
                {
-                  "name": "[parameters('backEndNSGName')]",
+                  "name": "backend",
                   "properties": 
                   {
                      "description": "Allow WEB",
