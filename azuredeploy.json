@@ -76,8 +76,7 @@
               "addressPrefix": "[parameters('subnet2Prefix')]"
             }
           }
-        ]
-      },
+        ],
         "securityRules": [
     {
       "name": "rdp-rule",
@@ -107,8 +106,15 @@
         "direction": "Inbound"
       }
     }
+      
+        
   ]
       }
     
-  ]
+  
 }
+
+
+
+
+
