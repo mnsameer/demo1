@@ -6,56 +6,44 @@
       "vnetName": 
       {
          "type": "string",
-         "defaultValue": "VNet1",
-         "metadata": 
-         {
-            "description": "VNet name"
-         }
+         "defaultValue": "VNet1"
+      },
+      "nsg1": 
+      {
+         "type": "string",
+         "defaultValue": "nsg1"
+      },
+      "nsg2": 
+      {
+         "type": "string",
+         "defaultValue": "nsg2"
       },
       "vnetAddressPrefix": 
       {
          "type": "string",
-         "defaultValue": "10.0.0.0/16",
-         "metadata": 
-         {
-            "description": "Address prefix"
-         }
+         "defaultValue": "10.0.0.0/16"
       },
       "subnet1Prefix": 
       {
          "type": "string",
-         "defaultValue": "10.0.0.0/24",
-         "metadata": 
-         {
-            "description": "Subnet 1 Prefix"
-         }
+         "defaultValue": "10.0.0.0/24"
       },
       "subnet1Name": 
       {
          "type": "string",
-         "defaultValue": "Subnet1",
-         "metadata": 
-         {
-            "description": "Subnet 1 Name"
-         }
+         "defaultValue": "Subnet1"
       },
       "subnet2Prefix": 
       {
          "type": "string",
-         "defaultValue": "10.0.1.0/24",
-         "metadata": 
-         {
-            "description": "Subnet 2 Prefix"
-         }
+         "defaultValue": "10.0.1.0/24"
+        
       },
       "subnet2Name": 
       {
          "type": "string",
-         "defaultValue": "Subnet2",
-         "metadata": 
-         {
-            "description": "Subnet 2 Name"
-         }
+         "defaultValue": "Subnet2"
+         
       }
    },
    "variables": 
@@ -102,7 +90,7 @@
             "securityRules": 
             [               
                {
-                  "name": "rdp-rule",
+                  "name": "[parameters('nsg1')]",
                   "properties": 
                   {
                      "description": "Allow RDP",
@@ -117,7 +105,7 @@
                   }
                },               
                {
-                  "name": "web-rule",
+                  "name": "[parameters('nsg1')]",
                   "properties": 
                   {
                      "description": "Allow WEB",
