@@ -61,14 +61,17 @@
             "properties": {
               "addressPrefix": "10.0.2.0/24",
               "networkSecurityGroup": {
-      "id": "[resourceId('Microsoft.Network/networkSecurityGroups', 'parameters('frontEndNSGName')')]"
+      "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('frontEndNSGName'))]"
       }
             }
           },
           {
             "name": "[parameters('subnet2Name')]",
             "properties": {
-              "addressPrefix": "[parameters('subnet2Prefix')]"
+              "addressPrefix": "[parameters('subnet2Prefix')]",
+              "networkSecurityGroup": {
+      "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('backEndNSGName'))]"
+      }
             }
           }
         ],
