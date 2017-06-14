@@ -33,6 +33,14 @@
     "backEndNSGName": {
       "type": "string",
       "defaultValue": "NSG2"
+    },
+     "newCapacity":{
+      "type":"int",
+       "defaultValue": 2
+    },
+    "vmSku": {
+      "type": "string",
+      "defaultValue": "Standard_D1_v2",
     }
   },
   "variables": {
@@ -68,10 +76,7 @@
           {
             "name": "[parameters('subnet2Name')]",
             "properties": {
-              "addressPrefix": "[parameters('subnet2Prefix')]",
-              "networkSecurityGroup": {
-      "id": "[resourceId('Microsoft.Network/networkSecurityGroups', parameters('backEndNSGName'))]"
-      }
+              "addressPrefix": "[parameters('subnet2Prefix')]"
             }
           }
         ],
@@ -133,7 +138,7 @@
               "protocol": "Tcp",
               "sourcePortRange": "*",
               "destinationPortRange": "1433",
-              "sourceAddressPrefix": "*",
+              "sourceAddressPrefix": "[parameters('frontEndSubnetPrefix')]",
               "destinationAddressPrefix": "*",
               "access": "Allow",
               "priority": 100,
@@ -156,6 +161,17 @@
           }
 
         ]
+      }
+    },
+     {
+      "type":"Microsoft.Compute/virtualMachineScaleSets",
+      "apiVersion":"2017-03-30",
+      "name":"[parameters('vnetName')]",
+      "location":"[resourceGroup().location]",
+      "sku":{
+        "name":"[parameters('vmSku')]",
+        "tier":"Standard",
+        "capacity":"[parameters('newCapacity')]"
       }
     }
   ]
