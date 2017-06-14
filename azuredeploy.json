@@ -184,7 +184,7 @@
                 "publicIPAllocationMethod": "Dynamic",
                 "idleTimeoutInMinutes": 4,
                 "dnsSettings": {
-                    "domainNameLabel": "dragonwizard"
+                    "domainNameLabel": "flyingwizard"
                 }
             },
             "dependsOn": []
