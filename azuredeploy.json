@@ -21,22 +21,19 @@
         "virtualNetworks_vmssVnet_name": {
             "defaultValue": "vmssVnet",
             "type": "String"
-        },
-        "loadBalancers_vmssLb_id": {
-            "defaultValue": "/subscriptions/3d68a81a-c96c-4709-bad5-e438ad1e2890/resourceGroups/scaleset/providers/Microsoft.Network/loadBalancers/vmssLb/frontendIPConfigurations/LoadBalancerFrontEnd",
-            "type": "String"
-        },
-        "loadBalancers_vmssLb_id_1": {
-            "defaultValue": "/subscriptions/3d68a81a-c96c-4709-bad5-e438ad1e2890/resourceGroups/scaleset/providers/Microsoft.Network/loadBalancers/vmssLb/frontendIPConfigurations/LoadBalancerFrontEnd",
-            "type": "String"
         }
     },
-    "variables": {},
-    "resources": [
+    "variables": {
+        "maximum": 3,
+        "minimum": 1
+        },
+    "resources": 
+    [
         {
-            "comments": "Generalized from resource: '/subscriptions/3d68a81a-c96c-4709-bad5-e438ad1e2890/resourceGroups/scaleset/providers/Microsoft.Compute/virtualMachineScaleSets/vmss'.",
+            
             "type": "Microsoft.Compute/virtualMachineScaleSets",
-            "sku": {
+            "sku": 
+            {
                 "name": "Standard_D1_v2",
                 "tier": "Standard",
                 "capacity": 1
@@ -45,26 +42,34 @@
             "apiVersion": "2016-04-30-preview",
             "location": "westus",
             "scale": null,
-            "properties": {
-                "singlePlacementGroup": false,
-                "upgradePolicy": {
+            "properties": 
+            {
+                "singlePlacementGroup": true,
+                "upgradePolicy": 
+                {
                     "mode": "Manual"
                 },
                 "virtualMachineProfile": {
-                    "osProfile": {
+                    
+                    "osProfile": 
+                    {
                         "computerNamePrefix": "[concat(parameters('virtualMachineScaleSets_vmss_name'),'57pxx')]",
                         "adminUsername": "admiin",
-                        "windowsConfiguration": {
+                        "windowsConfiguration": 
+                        {
                             "provisionVMAgent": true,
                             "enableAutomaticUpdates": true
                         },
                         "adminPassword": "mohideensameer@93"
                     },
-                    "storageProfile": {
-                        "osDisk": {
+                    "storageProfile": 
+                    {
+                        "osDisk": 
+                        {
                             "createOption": "FromImage",
                             "caching": "ReadWrite",
-                            "managedDisk": {
+                            "managedDisk": 
+                            {
                                 "storageAccountType": "Standard_LRS"
                             }
                         },
@@ -95,7 +100,8 @@
                                 }
                             }
                         ]
-                    }
+                    },
+
                 },
                 "overprovision": true
             },
@@ -105,7 +111,7 @@
             ]
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/3d68a81a-c96c-4709-bad5-e438ad1e2890/resourceGroups/scaleset/providers/microsoft.insights/autoscalesettings/cpuautoscale'.",
+            
             "type": "microsoft.insights/autoscalesettings",
             "name": "[parameters('autoscalesettings_cpuautoscale_name')]",
             "apiVersion": "2014-04-01",
@@ -117,8 +123,8 @@
                     {
                         "name": "Profile1",
                         "capacity": {
-                            "minimum": "1",
-                            "maximum": "3",
+                            "minimum": "[variables('minimum')]",
+                            "maximum": "[variables('maximum')]",
                             "default": "1"
                         },
                         "rules": [
@@ -174,7 +180,7 @@
         
         
         {
-            "comments": "Generalized from resource: '/subscriptions/3d68a81a-c96c-4709-bad5-e438ad1e2890/resourceGroups/scaleset/providers/Microsoft.Network/publicIPAddresses/ip01'.",
+            
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[parameters('publicIPAddresses_ip01_name')]",
             "apiVersion": "2017-03-01",
@@ -184,28 +190,33 @@
                 "publicIPAllocationMethod": "Dynamic",
                 "idleTimeoutInMinutes": 4,
                 "dnsSettings": {
-                    "domainNameLabel": "flyingwizard"
+                    "domainNameLabel": "dragonwizard"
                 }
             },
             "dependsOn": []
         },
         {
-            "comments": "Generalized from resource: '/subscriptions/3d68a81a-c96c-4709-bad5-e438ad1e2890/resourceGroups/scaleset/providers/Microsoft.Network/virtualNetworks/vmssVnet'.",
+            
             "type": "Microsoft.Network/virtualNetworks",
             "name": "[parameters('virtualNetworks_vmssVnet_name')]",
             "apiVersion": "2017-03-01",
             "location": "westus",
             "scale": null,
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
+            "properties": 
+            {
+                "addressSpace": 
+                {
+                    "addressPrefixes": 
+                    [
                         "10.0.0.0/16"
                     ]
                 },
-                "subnets": [
+                "subnets": 
+                [
                     {
                         "name": "default",
-                        "properties": {
+                        "properties": 
+                        {
                             "addressPrefix": "10.0.0.0/21"
                         }
                     }
