@@ -38,7 +38,7 @@
         }
     },
     "variables": {
-        "templatelink": "https://raw.githubusercontent.com/rjmax/Build2017/master/Act1.TemplateEnhancements/Chapter03.LinuxVM.json"
+        "templatelink": "https://raw.githubusercontent.com/mnsameer/vnet/master/azuredeploy.json"
     },
     "resources": [
         {
