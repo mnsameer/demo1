@@ -5,7 +5,7 @@
         {
             "apiVersion": "2016-01-01",
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[concat(copyIndex(),'storage', uniqueString(resourceGroup().id))]",
+            "name": "storage1",
             "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard_LRS"
