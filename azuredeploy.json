@@ -10,7 +10,7 @@
             }
         },
         "adminPassword": {
-            "type": "securestring",
+            "type": "string",
             "default": "mohideensameer@93",
             "metadata": {
                 "description": "Password for the Virtual Machine."
