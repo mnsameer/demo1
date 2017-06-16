@@ -4,18 +4,21 @@
     "parameters": {
         "adminUsername": {
             "type": "string",
+            "default": "sameer",
             "metadata": {
                 "description": "User name for the Virtual Machine."
             }
         },
         "adminPassword": {
             "type": "securestring",
+            "default": "mohideensameer@93",
             "metadata": {
                 "description": "Password for the Virtual Machine."
             }
         },
         "dnsLabelPrefix": {
             "type": "string",
+            "default": "pikachuwizard",
             "metadata": {
                 "description": "Unique DNS Name for the Public IP used to access the Virtual Machine."
             }
