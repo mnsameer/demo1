@@ -1,162 +1,32 @@
 {
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
-    "parameters": {
-        "virtualMachineScaleSets_vmss_name": {
-            "defaultValue": "vmss",
-            "type": "String"
-        },
-        "autoscalesettings_cpuautoscale_name": {
-            "defaultValue": "cpuautoscale",
-            "type": "String"
-        },
-        "loadBalancers_vmssLb_name": {
-            "defaultValue": "vmssLb",
-            "type": "String"
-        },
-        "publicIPAddresses_ip01_name": {
-            "defaultValue": "ip01",
-            "type": "String"
-        },
-        "virtualNetworks_vmssVnet_name": {
-            "defaultValue": "vmssVnet",
-            "type": "String"
-        },
-          "index": {
-            "type": "int"
-        }
+    "parameters":{
+        "org": { 
+            "type": "array", 
+            "defaultValue": [ 
+                "contoso", 
+                "fabrikam", 
+                "coho" 
+                ] 
+  }
     },
-    "variables": {
-        "maximum": 3,
-        "minimum": 1,
-        "subnetName": "Subnet",
-        "subnetPrefix": "10.0.0.0/24"
-        },
-    "resources": 
-    [
+    "resources": [
         {
-            
-            "type": "Microsoft.Compute/virtualMachineScaleSets",
-            "sku": 
-            {
-                "name": "Standard_D1_v2",
-                "tier": "Standard",
-                "capacity": 1
+            "apiVersion": "2016-01-01",
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[concat('storage', parameters('org')[copyIndex()])]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
             },
-            "name": "[concat(parameters('virtualMachineScaleSets_vmss_name'),parameters('index'))]",
-            "apiVersion": "2016-04-30-preview",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": 
-            {
-                "singlePlacementGroup": true,
-                "upgradePolicy": 
-                {
-                    "mode": "Manual"
-                },
-                "virtualMachineProfile": {
-                    
-                    "osProfile": 
-                    {
-                        "computerNamePrefix": "[concat(parameters('virtualMachineScaleSets_vmss_name'),parameters('index'))]",
-                        "adminUsername": "admiin",
-                        "windowsConfiguration": 
-                        {
-                            "provisionVMAgent": true,
-                            "enableAutomaticUpdates": true
-                        },
-                        "adminPassword": "mohideensameer@93"
-                    },
-                    "storageProfile": 
-                    {
-                        "osDisk": 
-                        {
-                            "createOption": "FromImage",
-                            "caching": "ReadWrite",
-                            "managedDisk": 
-                            {
-                                "storageAccountType": "Standard_LRS"
-                            }
-                        },
-                        "imageReference": {
-                            "publisher": "MicrosoftWindowsServer",
-                            "offer": "WindowsServer",
-                            "sku": "2016-Datacenter",
-                            "version": "latest"
-                        }
-                    },
-                    "networkProfile": {
-                        "networkInterfaceConfigurations": [
-                            {
-                                "name": "[concat(parameters('virtualMachineScaleSets_vmss_name'),'Nic',parameters('index'))]",
-                                "properties": {
-                                    "primary": true,
-                                    "ipConfigurations": [
-                                        {
-                                            "name": "[concat(parameters('virtualMachineScaleSets_vmss_name'),'IpConfig',parameters('index'))]",
-                                            "properties": {
-                                                "subnet": {
-                                                    "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vmssVnet_name')), parameters('index'),'/subnets/default')]"
-                                                }
-                                                
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-
-                },
-                "overprovision": true
-            }
-        },
-        
-        
-        
-        {
-            
-            "type": "Microsoft.Network/publicIPAddresses",
-            "name": "[concat(parameters('publicIPAddresses_ip01_name'),parameters('index'))]",
-            "apiVersion": "2017-03-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": {
-                "publicIPAllocationMethod": "Dynamic",
-                "idleTimeoutInMinutes": 4,
-                "dnsSettings": {
-                    "domainNameLabel": "[concat('dragonwizard',parameters('index'))]"
-                }
-            },
-            "dependsOn": []
-        },
-        {
-            
-            "type": "Microsoft.Network/virtualNetworks",
-            "name": "[concat(parameters('virtualNetworks_vmssVnet_name'),parameters('index'))]",
-            "apiVersion": "2017-03-01",
-            "location": "[resourceGroup().location]",
-            "scale": null,
-            "properties": 
-            {
-                "addressSpace": 
-                {
-                    "addressPrefixes": 
-                    [
-                        "10.0.0.0/16"
-                    ]
-                },
-                "subnets": 
-                [
-                    {
-                        "name": "[concat(parameters('index'), variables('subnetName'))]",
-                        "properties": {
-                            "addressPrefix": "[variables('subnetPrefix')]"
-                        }
-                    }
-                ],
-                "virtualNetworkPeerings": []
+            "kind": "Storage",
+            "properties": {},
+            "copy": {
+                "name": "storagecopy",
+                "count": 3
             }
         }
-    ]
+    ],
+    "outputs": {}
 }
