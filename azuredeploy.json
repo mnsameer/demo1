@@ -29,8 +29,7 @@
             "metadata": {
                 "description": "The Ubuntu version for the VM. This will pick a fully patched image of this given Ubuntu version."
             }
-        }
-    },
+        },
     "variables": {
         "subnetAddressPrefix":"10.0.0.0/24"
     },
