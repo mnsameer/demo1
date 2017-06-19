@@ -2,47 +2,219 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vnetname": {
-            "type": "string",
-            "defaultValue": "vnet"
-            },
-        "addressPrefix": {
-            "type": "string",
-            "defaultValue": "10.0.0.0/16"
+        "virtualMachineScaleSets_vmss_name": {
+            "defaultValue": "vmss",
+            "type": "String"
+        },
+        "autoscalesettings_cpuautoscale_name": {
+            "defaultValue": "cpuautoscale",
+            "type": "String"
+        },
+        "loadBalancers_vmssLb_name": {
+            "defaultValue": "vmssLb",
+            "type": "String"
+        },
+        "publicIPAddresses_ip01_name": {
+            "defaultValue": "ip01",
+            "type": "String"
+        },
+        "virtualNetworks_vmssVnet_name": {
+            "defaultValue": "vmssVnet",
+            "type": "String"
         }
-        },
+    },
     "variables": {
-        "subnetAddressPrefix":"10.0.0.0/24"
-    },
-    "resources": [
-{
-    "type": "Microsoft.Network/virtualNetworks",
-    "name": "[concat(parameters('vnetname'), copyIndex())]",
-    "apiVersion": "2016-06-01",
-    "copy":{
-        "count": 2,
-        "name": "vnetloop"
-    },
-    "location": "[resourceGroup().location]",
-    "properties": {
-        "addressSpace": {
-            "addressPrefixes": [
-                "[parameters('addressPrefix')]"
-            ]
+        "maximum": 3,
+        "minimum": 1
         },
-        "copy": [
+    "resources": 
+    [
+        {
+            
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "sku": 
             {
-                "name": "subnets",
-                "count": 2,
-                "input": {
-                    "name": "[concat('subnet-', copyIndex('subnets'))]",
-                    "properties": {
-                        "addressPrefix": "[variables('subnetAddressPrefix')[copyIndex('subnets')]]"
+                "name": "Standard_D1_v2",
+                "tier": "Standard",
+                "capacity": 1
+            },
+            "name": "[parameters('virtualMachineScaleSets_vmss_name')]",
+            "apiVersion": "2016-04-30-preview",
+            "location": "westus",
+            "scale": null,
+            "properties": 
+            {
+                "singlePlacementGroup": true,
+                "upgradePolicy": 
+                {
+                    "mode": "Manual"
+                },
+                "virtualMachineProfile": {
+                    
+                    "osProfile": 
+                    {
+                        "computerNamePrefix": "[concat(parameters('virtualMachineScaleSets_vmss_name'),'57pxx')]",
+                        "adminUsername": "admiin",
+                        "windowsConfiguration": 
+                        {
+                            "provisionVMAgent": true,
+                            "enableAutomaticUpdates": true
+                        },
+                        "adminPassword": "mohideensameer@93"
+                    },
+                    "storageProfile": 
+                    {
+                        "osDisk": 
+                        {
+                            "createOption": "FromImage",
+                            "caching": "ReadWrite",
+                            "managedDisk": 
+                            {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        },
+                        "imageReference": {
+                            "publisher": "MicrosoftWindowsServer",
+                            "offer": "WindowsServer",
+                            "sku": "2016-Datacenter",
+                            "version": "latest"
+                        }
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[concat(parameters('virtualMachineScaleSets_vmss_name'),'Nic')]",
+                                "properties": {
+                                    "primary": true,
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('virtualMachineScaleSets_vmss_name'),'IpConfig')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('virtualNetworks_vmssVnet_name')), '/subnets/default')]"
+                                                }
+                                                
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
                     }
+
                 }
             }
-        ]
-    }
-}
-]
+        },
+        {
+            
+            "type": "microsoft.insights/autoscalesettings",
+            "name": "[parameters('autoscalesettings_cpuautoscale_name')]",
+            "apiVersion": "2014-04-01",
+            "location": "westus",
+            "tags": {},
+            "scale": null,
+            "properties": {
+                "profiles": [
+                    {
+                        "name": "Profile1",
+                        "capacity": {
+                            "minimum": "[variables('minimum')]",
+                            "maximum": "[variables('maximum')]",
+                            "default": "1"
+                        },
+                        "rules": [
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_name'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "GreaterThan",
+                                    "threshold": 75
+                                },
+                                "scaleAction": {
+                                    "direction": "Increase",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT1M"
+                                }
+                            },
+                            {
+                                "metricTrigger": {
+                                    "metricName": "Percentage CPU",
+                                    "metricNamespace": "",
+                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_name'))]",
+                                    "timeGrain": "PT1M",
+                                    "statistic": "Average",
+                                    "timeWindow": "PT5M",
+                                    "timeAggregation": "Average",
+                                    "operator": "LessThan",
+                                    "threshold": 25
+                                },
+                                "scaleAction": {
+                                    "direction": "Decrease",
+                                    "type": "ChangeCount",
+                                    "value": "1",
+                                    "cooldown": "PT1M"
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "enabled": true,
+                "name": "[parameters('autoscalesettings_cpuautoscale_name')]",
+                "targetResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_name'))]"
+            }
+        },
+        
+        
+        {
+            
+            "type": "Microsoft.Network/publicIPAddresses",
+            "name": "[parameters('publicIPAddresses_ip01_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "westus",
+            "scale": null,
+            "properties": {
+                "publicIPAllocationMethod": "Dynamic",
+                "idleTimeoutInMinutes": 4,
+                "dnsSettings": {
+                    "domainNameLabel": "dragonwizard"
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            
+            "type": "Microsoft.Network/virtualNetworks",
+            "name": "[parameters('virtualNetworks_vmssVnet_name')]",
+            "apiVersion": "2017-03-01",
+            "location": "westus",
+            "scale": null,
+            "properties": 
+            {
+                "addressSpace": 
+                {
+                    "addressPrefixes": 
+                    [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": 
+                [
+                    {
+                        "name": "default",
+                        "properties": 
+                        {
+                            "addressPrefix": "10.0.0.0/21"
+                        }
+                    }
+                ],
+                "virtualNetworkPeerings": []
+            }
+        }
+    ]
 }
