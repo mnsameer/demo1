@@ -111,70 +111,7 @@
                 "overprovision": true
             }
         },
-        {
-            
-            "type": "microsoft.insights/autoscalesettings",
-            "name": "[concat(parameters('autoscalesettings_cpuautoscale_name'),parameters('index'))]",
-            "apiVersion": "2014-04-01",
-            "location": "westus",
-            "tags": {},
-            "scale": null,
-            "properties": {
-                "profiles": [
-                    {
-                        "name": "Profile1",
-                        "capacity": {
-                            "minimum": "[variables('minimum')]",
-                            "maximum": "[variables('maximum')]",
-                            "default": "1"
-                        },
-                        "rules": [
-                            {
-                                "metricTrigger": {
-                                    "metricName": "Percentage CPU",
-                                    "metricNamespace": "",
-                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_name'))]",
-                                    "timeGrain": "PT1M",
-                                    "statistic": "Average",
-                                    "timeWindow": "PT5M",
-                                    "timeAggregation": "Average",
-                                    "operator": "GreaterThan",
-                                    "threshold": 75
-                                },
-                                "scaleAction": {
-                                    "direction": "Increase",
-                                    "type": "ChangeCount",
-                                    "value": "1",
-                                    "cooldown": "PT1M"
-                                }
-                            },
-                            {
-                                "metricTrigger": {
-                                    "metricName": "Percentage CPU",
-                                    "metricNamespace": "",
-                                    "metricResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_name'))]",
-                                    "timeGrain": "PT1M",
-                                    "statistic": "Average",
-                                    "timeWindow": "PT5M",
-                                    "timeAggregation": "Average",
-                                    "operator": "LessThan",
-                                    "threshold": 25
-                                },
-                                "scaleAction": {
-                                    "direction": "Decrease",
-                                    "type": "ChangeCount",
-                                    "value": "1",
-                                    "cooldown": "PT1M"
-                                }
-                            }
-                        ]
-                    }
-                ],
-                "enabled": true,
-                "name": "[concat(parameters('autoscalesettings_cpuautoscale_name'),parameters('index'))]",
-                "targetResourceUri": "[resourceId('Microsoft.Compute/virtualMachineScaleSets', parameters('virtualMachineScaleSets_vmss_name'))]"
-            }
-        },
+        
         
         
         {
