@@ -21,8 +21,6 @@
                 "name": "Standard_LRS"
             },
             "kind": "Storage",
-            "
-            
             "copy": { 
                 "name": "storagecopy", 
                 "count": "[length(parameters('org'))]" 
