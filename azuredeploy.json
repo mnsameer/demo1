@@ -1,31 +1,57 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
-    "parameters": { 
-                    "org": { 
-                        "type": "array", 
-                        "defaultValue": [ 
-                            "contoso", 
-                            "fabrikam", 
-                            "coho" 
-                        ] 
-  }
-}, 
-    "resources": [
-        {
-            "apiVersion": "2016-01-01",
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[concat('storage', parameters('org')[copyIndex()])]", 
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "copy": { 
-                "name": "storagecopy", 
-                "count": "[length(parameters('org'))]" 
-                    }
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters":{
+    "VNetSettings":{
+      "type":"object",
+        "value":{
+            "name":"VNet1",
+            "addressPrefixes": [
+                {
+                    "name": "firstPrefix",
+                    "addressPrefix": "10.0.0.0/22"
+                }
+            ],
+            "subnets":[
+                {
+                    "name": "firstSubnet",
+                    "addressPrefix": "10.0.0.0/24"
+                },
+                {
+                    "name":"secondSubnet",
+                    "addressPrefix":"10.0.1.0/24"
+                }
+            ]
         }
-    ],
-    "outputs": {}
+    }
+},
+  "resources": [
+    {
+        "apiVersion": "2015-06-15",
+        "type": "Microsoft.Network/virtualNetworks",
+        "name": "[parameters('VNetSettings').name]",
+        "location":"[resourceGroup().location]",
+        "properties": {
+          "addressSpace":{
+              "addressPrefixes": [
+                "[parameters('VNetSettings').addressPrefixes[0].addressPrefix]"
+              ]
+          },
+          "subnets":[
+              {
+                  "name":"[parameters('VNetSettings').subnets[0].name]",
+                  "properties": {
+                      "addressPrefix": "[parameters('VNetSettings').subnets[0].addressPrefix]"
+                  }
+              },
+              {
+                  "name":"[parameters('VNetSettings').subnets[1].name]",
+                  "properties": {
+                      "addressPrefix": "[parameters('VNetSettings').subnets[1].addressPrefix]"
+                  }
+              }
+          ]
+        }
+    }
+  ]
 }
