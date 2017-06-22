@@ -26,7 +26,9 @@
         }
                
     },
-     "vnet":{}
+     "vnet":{
+     "type": "string",
+     "defaultValue": " "}
 },
   "resources": [
     {
