@@ -1,8 +1,30 @@
 {
-  "itemDisplayName": "Deploy a simple Windows VM",
-  "icon": "windowsVM",
-  "description": "This template allows you to deploy a simple Windows VM using a few different options for the Windows version, using the latest patched version. This will deploy a A2 size VM in the resource group location and return the FQDN of the VM.",
-  "summary": "This template takes a minimum amount of parameters and deploys a Windows VM, using the latest patched version.",
-  "githubUsername": "bmoore-msft",
-  "dateUpdated": "2016-12-14"
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    
+    },
+    
+"variables": {
+  
+},
+"resources": [
+    {
+        "apiVersion": "2015-01-01",
+        "name": "nestedTemplate",
+        "type": "Microsoft.Resources/deployments",
+        "properties": {
+            "mode": "incremental",
+            "templateLink": {
+                "uri": "https://raw.githubusercontent.com/mnsameer/demo1/master/azuredeploy.json",
+                "contentVersion": "1.0.0.0"
+            },
+             "parametersLink": { 
+          "uri":"https://raw.githubusercontent.com/mnsameer/demo1/master/azuredeploy.parameters.json",
+          "contentVersion":"1.0.0.0"
+       }
+          
+        }
+    }
+]
 }
