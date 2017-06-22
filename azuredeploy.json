@@ -25,7 +25,10 @@
             ]
         }
                
-    }
+    },
+     "prod":{
+       "type": "string"
+     }
 },
   "resources": [
     {
