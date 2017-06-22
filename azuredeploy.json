@@ -3,31 +3,36 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
    "parameters":{
+     "VNet1":
+     {
+       "type": "object",
+       "defaultValue": "VNetSettings"
+     }
    
 },
   "resources": [
     {
         "apiVersion": "2015-06-15",
         "type": "Microsoft.Network/virtualNetworks",
-        "name": "[parameters('VNetSettings').name]",
+        "name": "[parameters('VNet1').name]",
         "location":"[resourceGroup().location]",
         "properties": {
           "addressSpace":{
               "addressPrefixes": [
-                "[parameters('VNetSettings').addressPrefixes[0].addressPrefix]"
+                "[parameters('VNet1').addressPrefixes[0].addressPrefix]"
               ]
           },
           "subnets":[
               {
-                  "name":"[parameters('VNetSettings').subnets[0].name]",
+                  "name":"[parameters('VNet1').subnets[0].name]",
                   "properties": {
-                      "addressPrefix": "[parameters('VNetSettings').subnets[0].addressPrefix]"
+                      "addressPrefix": "[parameters('VNet1').subnets[0].addressPrefix]"
                   }
               },
               {
-                  "name":"[parameters('VNetSettings').subnets[1].name]",
+                  "name":"[parameters('VNet1').subnets[1].name]",
                   "properties": {
-                      "addressPrefix": "[parameters('VNetSettings').subnets[1].addressPrefix]"
+                      "addressPrefix": "[parameters('VNet1').subnets[1].addressPrefix]"
                   }
               }
           ]
