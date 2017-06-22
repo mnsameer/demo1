@@ -27,7 +27,8 @@
                
     },
      "prod":{
-       "type": "string"
+       "type": "string",
+       "defaultValue": "thu"
      }
 },
   "resources": [
