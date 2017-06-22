@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
    "parameters":{
     "VNetSettings":{
-              "type": "object",
+              
              "value":
                {
             "name":"VNet2",
