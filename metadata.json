@@ -16,7 +16,7 @@
         "properties": {
             "mode": "incremental",
             "templateLink": {
-                "uri": "https://raw.githubusercontent.com/mnsameer/demo1/master/azuredeploy.json",
+                "uri": "https://raw.githubusercontent.com/mnsameer/demo1/master/azuredeploy1.json",
                 "contentVersion": "1.0.0.0"
             },
              "parametersLink": { 
