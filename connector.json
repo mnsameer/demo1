@@ -39,7 +39,7 @@
             "storageAccountType": "Standard_GRS"
         }
     }
-}
+
   },
   "variables": {
     "TemplateUrl": "[concat('https://raw.githubusercontent.com/mnsameer/vnet/master/',parameters('environment'),'deploy.json')]",
