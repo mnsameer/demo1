@@ -2,13 +2,12 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "environment": {
-      "type": "string",
-      "allowedValues": [
-        "dev", "prod"
-      ]
-    },
-    "dev":{
+  
+
+  },
+  "variables": {
+    "TemplateUrl": "[concat('https://raw.githubusercontent.com/mnsameer/vnet/master/',parameters('environment'),'deploy.json')]",
+     "dev":{
               
              "value":
                {
@@ -39,10 +38,6 @@
             "storageAccountType": "Standard_GRS"
         }
     }
-
-  },
-  "variables": {
-    "TemplateUrl": "[concat('https://raw.githubusercontent.com/mnsameer/vnet/master/',parameters('environment'),'deploy.json')]",
     
   },
   "resources": [
