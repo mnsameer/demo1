@@ -1,0 +1,37 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+   "parameters":{
+    "dev":{
+              
+             "value":
+               {
+            "name":"VNet2",
+            "addressPrefixes": [
+                {
+                    "name": "firstPrefix",
+                    "addressPrefix": "10.0.0.0/22"
+                }
+            ],
+            "subnets":[
+                {
+                    "name": "firstSubnet",
+                    "addressPrefix": "10.0.0.0/24"
+                },
+                {
+                    "name":"secondSubnet",
+                    "addressPrefix":"10.0.1.0/24"
+                }
+            ]
+        }
+               
+    },
+    "prod":
+    {
+        "value":
+        {
+            "storageAccountType": "Standard_GRS"
+        }
+    }
+}
+}
