@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+  "environment": {
+      "type": "string",
+      "allowedValues": [
+        "dev", "prod"
+      ]
+    }
+
+  },
+  "variables": {
+    "TemplateUrl": "[concat('https://raw.githubusercontent.com/mnsameer/vnet/master/',parameters('environment'),'deploy.json')]",
+     "dev":{
+              
+             "value":
+               {
+            "name":"VNet2",
+            "addressPrefixes": [
+                {
+                    "name": "firstPrefix",
+                    "addressPrefix": "10.0.0.0/22"
+                }
+            ],
+            "subnets":[
+                {
+                    "name": "firstSubnet",
+                    "addressPrefix": "10.0.0.0/24"
+                },
+                {
+                    "name":"secondSubnet",
+                    "addressPrefix":"10.0.1.0/24"
+                }
+            ]
+        }
+               
+    },
+    "prod":
+    {
+        "value":
+        {
+            "storageAccountType": "Standard_GRS"
+        }
+    }
+    
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-01-01",
+      "name": "Nested_Template",
+      "type": "Microsoft.Resources/deployments",
+      
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('TemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+         "parameters": {
+          "environment": {
+            "value": "[parameters('environment')]"
+          }
+        
+      }
+    }
+  }
+  ]
+}
