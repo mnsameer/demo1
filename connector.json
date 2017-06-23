@@ -7,11 +7,43 @@
       "allowedValues": [
         "dev", "prod"
       ]
+    },
+    "dev":{
+              
+             "value":
+               {
+            "name":"VNet2",
+            "addressPrefixes": [
+                {
+                    "name": "firstPrefix",
+                    "addressPrefix": "10.0.0.0/22"
+                }
+            ],
+            "subnets":[
+                {
+                    "name": "firstSubnet",
+                    "addressPrefix": "10.0.0.0/24"
+                },
+                {
+                    "name":"secondSubnet",
+                    "addressPrefix":"10.0.1.0/24"
+                }
+            ]
+        }
+               
+    },
+    "prod":
+    {
+        "value":
+        {
+            "storageAccountType": "Standard_GRS"
+        }
     }
+}
   },
   "variables": {
     "TemplateUrl": "[concat('https://raw.githubusercontent.com/mnsameer/vnet/master/',parameters('environment'),'deploy.json')]",
-    "ParameterUrl": "https://raw.githubusercontent.com/mnsameer/vnet/master/parameter.json"
+    
   },
   "resources": [
     {
@@ -25,10 +57,10 @@
           "uri": "[variables('TemplateUrl')]",
           "contentVersion": "1.0.0.0"
         },
-        "parametersLink": {
-          "uri": "[variables('ParameterUrl')]",
-          "contentVersion": "1.0.0.0"
-        }
+         "parameters": {
+          "environment": {
+            "value": "[parameters('environment')]"
+          }
         
       }
     }
