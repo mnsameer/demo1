@@ -11,8 +11,23 @@
 
   },
   "variables": {
-    "TemplateUrl": "[concat('https://raw.githubusercontent.com/mnsameer/vnet/master/',parameters('environment'),'deploy.json')]",
-     "dev":{
+    "TemplateUrl": "[concat('https://raw.githubusercontent.com/mnsameer/vnet/master/',parameters('environment'),'deploy.json')]"     
+    
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-01-01",
+      "name": "Nested_Template",
+      "type": "Microsoft.Resources/deployments",
+      
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('TemplateUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+         "parameters": {
+         "dev":{
               
              "value":
                {
@@ -43,24 +58,6 @@
             "storageAccountType": "Standard_GRS"
         }
     }
-    
-  },
-  "resources": [
-    {
-      "apiVersion": "2015-01-01",
-      "name": "Nested_Template",
-      "type": "Microsoft.Resources/deployments",
-      
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "[variables('TemplateUrl')]",
-          "contentVersion": "1.0.0.0"
-        },
-         "parameters": {
-          "environment": {
-            "value": "[parameters('environment')]"
-          }
         
       }
     }
