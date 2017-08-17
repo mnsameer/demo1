@@ -1,0 +1,224 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+
+    "keyVaultNm": {
+      "value": null,
+      "type": "string",
+      "metadata": {
+        "description": "Key vault name, contains keys for logging into the AD"
+      }
+    },
+
+    "keyVaultRg": {
+      "value": null,
+      "type": "string",
+      "metadata": {
+        "description": "Resource Group for the above Key vault"
+      }
+    },
+
+    "settings": {
+      "value": null,
+      "type": "object",
+      "metadata": {
+        "description": "Object Containing all of the common settings for AD, api versions, VM Sizing, etc. See the parameters-XXX.json."
+      }
+    },
+
+    "templateSASKey": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Shared access signiture for the template storage account, used for template linking"
+      }
+    },
+    "templateUrl": {
+      "value": null,
+      "type": "string",
+      "metadata": {
+        "description": "Base URL where the AHM Templates are located"
+      }
+    }
+  },
+
+  "variables": {
+    "keyVault": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultRg'), '/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultNm'))]",
+    "appIdKeyVault": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultRg'), '/providers/Microsoft.KeyVault/vaults/', parameters('settings').customData.appIdKeyVault)]",
+
+    "prepCommonUrl": "[concat(parameters('templateUrl'), parameters('settings').prepCommon)]",
+    "chefServUrl": "[concat(parameters('templateUrl'), '/chef-server/chefServer.json')]",
+    "chefAutoUrl": "[concat(parameters('templateUrl'), '/chef-server/chefAutomate.json')]"
+  },
+  "resources": [
+    {
+      "name": "prepCommonChef",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "[parameters('settings').apiVersions.deploy]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('prepCommonUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+
+        "parameters": {
+          "settings": {
+            "value": "[parameters('settings')]"
+          },
+
+          "adAdminUsername": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('keyVault')]"
+              },
+              "secretName": "adAdminUsername"
+            }
+          },
+          "adAdminPassword": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('keyVault')]"
+              },
+              "secretName": "adAdminPassword"
+            }
+          },
+
+          "appId": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('appIdKeyVault')]"
+              },
+              "secretName": "[parameters('settings').customData.appId]"
+            }
+          },
+          "appIdObject": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('appIdKeyVault')]"
+              },
+              "secretName": "[parameters('settings').customData.appIdObject]"
+            }
+          },
+          "appIdSecret": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('appIdKeyVault')]"
+              },
+              "secretName": "[parameters('settings').customData.appIdSecret]"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "AHM-Chef-Server",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "[parameters('settings').apiVersions.deploy]",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'prepCommonChef')]"
+      ],
+
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('chefServUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+
+        "parameters": {
+          "nodeName": {
+            "value": "ahm-chef-srv"
+          },
+          "settings": {
+            "value": "[parameters('settings')]"
+          },
+
+          "adCmd": {
+            "value": "[reference('prepCommonChef').outputs.adCmd.value]"
+          },
+          "customData": {
+            "value": "[base64(reference('prepCommonChef').outputs.customData.value)]"
+          },
+
+          "sshKey": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('keyVault')]"
+              },
+              "secretName": "ahm-ssh-key"
+            }
+          },
+          "sshPub": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('keyVault')]"
+              },
+              "secretName": "ahm-ssh-pub"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "AHM-Chef-Automate",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "[parameters('settings').apiVersions.deploy]",
+      "dependsOn": [
+        "[concat('Microsoft.Resources/deployments/', 'prepCommonChef')]"
+      ],
+
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('chefAutoUrl')]",
+          "contentVersion": "1.0.0.0"
+        },
+
+        "parameters": {
+          "nodeName": {
+            "value": "ahm-chef-auto"
+          },
+          "settings": {
+            "value": "[parameters('settings')]"
+          },
+
+          "adCmd": {
+            "value": "[reference('prepCommonChef').outputs.adCmd.value]"
+          },
+          "customData": {
+            "value": "[base64(reference('prepCommonChef').outputs.customData.value)]"
+          },
+
+          "sshKey": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('keyVault')]"
+              },
+              "secretName": "ahm-ssh-key"
+            }
+          },
+          "sshPub": {
+            "reference": {
+              "keyVault": {
+                "id": "[variables('keyVault')]"
+              },
+              "secretName": "ahm-ssh-pub"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {
+    "adCmd":  {
+      "type": "string",
+      "value": "[reference('prepCommonChef').outputs.adCmd.value]"
+    },
+    "customData":  {
+      "type": "string",
+      "value": "[reference('prepCommonChef').outputs.customData.value]"
+    }
+  }
+}
