@@ -48,8 +48,8 @@
     "appIdKeyVault": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultRg'), '/providers/Microsoft.KeyVault/vaults/', parameters('settings').customData.appIdKeyVault)]",
 
     "prepCommonUrl": "[concat(parameters('templateUrl'), parameters('settings').prepCommon)]",
-    "chefServUrl": "[concat(parameters('templateUrl'), '/chef-server/chefServer.json')]",
-    "chefAutoUrl": "[concat(parameters('templateUrl'), '/chef-server/chefAutomate.json')]"
+    "chefServUrl": "[concat(parameters('templateUrl'), '/chefServer.json')]",
+    "chefAutoUrl": "[concat(parameters('templateUrl'), '/chefAutomate.json')]"
   },
   "resources": [
     {
