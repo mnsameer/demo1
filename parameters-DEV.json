@@ -17,7 +17,7 @@
         "location": "westus",
         "locationAbbrv": "",
 
-        "prepCommon": "\\parameters\\prepCommon.json",
+        "prepCommon": "/prepCommon.json",
 
         "adminUsername": "ahm-admin",
 
@@ -107,7 +107,7 @@
     },
 
     "templateUrl": {
-      "value": "C:\\Users\\mohideensameer.p\\Desktop\\AHMtemplates\\ahm-standard-templates"
+      "value": "https://raw.githubusercontent.com/mnsameer/demo1/master"
     }
 
   }
