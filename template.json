@@ -33,13 +33,6 @@
       "metadata": {
         "description": "Shared access signiture for the template storage account, used for template linking"
       }
-    },
-    "templateUrl": {
-      "value": null,
-      "type": "string",
-      "metadata": {
-        "description": "Base URL where the AHM Templates are located"
-      }
     }
   },
 
