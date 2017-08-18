@@ -17,7 +17,7 @@
         "location": "westus",
         "locationAbbrv": "",
 
-        "prepCommon": "/prepCommon.json",
+       
 
         "adminUsername": "ahm-admin",
 
@@ -106,9 +106,7 @@
       "value": "?sv=2016-05-31&ss=f&srt=co&sp=r&se=2040-04-11T03:50:12Z&st=2017-04-10T19:50:12Z&spr=https&sig=pO6cT9b70Q13HE20FweZ9QxYVW0J22NITOSFug1UINc%3D"
     },
 
-    "templateUrl": {
-      "value": "https://raw.githubusercontent.com/mnsameer/demo1/master"
-    }
+   
 
   }
 }
