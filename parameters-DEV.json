@@ -72,7 +72,7 @@
           "appIdSecret": "automate-deploy-client-secret",
           "appIdObject": "automate-deploy-object-id",
 
-          "value": "keyvault={OmsKeyVault}|applicationId={AppId}|servicePrincipal={AppIdObject}|tenantId=6362b077-fb81-4d5b-adf3-129cdb1b56cf|secret={AppIdSecret}"
+          "value": "keyvault={OmsKeyVault}|applicationId={AppId}|servicePrincipal={AppIdObject}|tenantId=f1dd3621-1fba-476b-a8a3-8b4a2b25d08a|secret={AppIdSecret}"
         },
 
         "network": {
