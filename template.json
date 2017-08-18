@@ -47,9 +47,9 @@
     "keyVault": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultRg'), '/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultNm'))]",
     "appIdKeyVault": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/', parameters('keyVaultRg'), '/providers/Microsoft.KeyVault/vaults/', parameters('settings').customData.appIdKeyVault)]",
 
-    "prepCommonUrl": "[concat(parameters('templateUrl'), parameters('settings').prepCommon)]",
-    "chefServUrl": "[concat(parameters('templateUrl'), '/chefServer.json')]",
-    "chefAutoUrl": "[concat(parameters('templateUrl'), '/chefAutomate.json')]"
+    "prepCommonUrl": "https://raw.githubusercontent.com/mnsameer/demo1/master/prepCommon.json",
+    "chefServUrl": "https://raw.githubusercontent.com/mnsameer/demo1/master/chefServer.json",
+    "chefAutoUrl": "https://raw.githubusercontent.com/mnsameer/demo1/master/chefAutomate.json"
   },
   "resources": [
     {
