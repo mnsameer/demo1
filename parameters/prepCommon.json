@@ -1,0 +1,70 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+
+    "settings": {
+      "value": null,
+      "type": "object",
+      "metadata": {
+        "description": "Object Containing all of the common settings for AD, api versions, VM Sizing, etc. See the parameters-XXX.json." 
+      }
+    },
+
+    "adAdminUsername": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "AD Admin login user name from the key vault, passed in from parent template" 
+      }
+    },
+    "adAdminPassword": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "AD Admin login password from the key vault, passed in from parent template" 
+      }
+    },
+
+    "appId": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Deployment Application User ID, used to access the key store to get OMS connection info" 
+      }
+    },
+    "appIdObject": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Deployment Application ID, used to access the key store to get OMS connection info" 
+      }
+    },
+    "appIdSecret": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Deployment Application ID Secret, used to access the key store to get OMS connection info" 
+      }
+    }
+
+  },
+
+  "variables": {
+    "cmdToExec": "[concat(parameters('settings').adCommand.cmd, replace(parameters('settings').adCommand.user, '{userFromKeyStore}', parameters('adAdminUsername')), replace(parameters('settings').adCommand.pwd, '{pwdFromKeyStore}', parameters('adAdminPassword')), parameters('settings').adCommand.fqdb, parameters('settings').adCommand.group, replace(parameters('settings').adCommand.groupDn, '{stage}', parameters('settings').stage), parameters('settings').adCommand.allowDn)]",
+
+    "customData": "[concat('keyvault=', parameters('settings').customData.omsKeyVault, '|applicationId=', parameters('appId'), '|servicePrincipal=', parameters('appIdObject'), '|tenantId=', subscription().tenantId, '|secret=', parameters('appIdSecret'))]"
+  },
+
+  "resources": [ ],
+  "outputs": {
+    "adCmd":  {
+      "type": "string",
+      "value": "[variables('cmdToExec')]"
+    },
+    "customData":  {
+      "type": "string",
+      "value": "[variables('customData')]"
+    }
+  }
+}

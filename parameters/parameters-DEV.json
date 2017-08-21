@@ -1,0 +1,114 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+
+    "keyVaultNm": {
+      "value": "ahm-global-dev-kv"
+    },
+
+    "keyVaultRg": {
+      "value": "ahm-storage-westus-rg"
+    },
+
+    "settings": {
+      "value": {
+        "stage": "dev",
+        "location": "westus",
+        "locationAbbrv": "",
+
+        "prepCommon": "/parameters/prepCommon.json",
+
+        "adminUsername": "ahm-admin",
+
+
+        "imageVHDUri": "https://ahmosimages.blob.core.windows.net/images/ahmbase-centos-7_3-20170814-1.11.vhd",
+
+        "vmSizes": {
+          "appGateway": "Standard_Small",
+          "web": "Standard_DS2_v2",
+          "fixedBatch": "Standard_DS2_v2",
+          "scaleBatch": "Standard_DS2_v2",
+          "jenkinsBld": "Standard_DS2_v2",
+          "jenkinsMstr": "Standard_DS2_v2",
+          "oraMonitor": "Standard_DS1_v2",
+          "oraNode": "Standard_L8s"
+        },
+
+        "defaultStorageType":"Premium_LRS",
+
+        "nodeCount": {
+          "appGatewayCapacity": 2,
+          "fixedBatch": 2,
+          "jenkinsBld": 4,
+          "oracle": 2,
+          "scaleBatch": 3,
+          "scaleWeb": 2
+        },
+
+        "apiVersions": {
+          "compute": "2017-03-30",
+          "deploy": "2015-01-01",
+          "extension": "2015-06-15",
+          "network": "2017-06-01",
+          "serviceBus": "2017-04-01"
+        },
+
+        "quote": "'",
+
+        "adCommand": {
+          "cmd": "/opt/daa/bootstrap/bootstrap.sh ",
+          "user": "--ad-user {userFromKeyStore} ",
+          "pwd": "--ad-password '{pwdFromKeyStore}' ",
+          "fqdb": "--ad-fqdn DAA.LOCAL ",
+          "group": "--ad-admin-group ahm-admins ",
+          "groupDn": "--group-dn OU={stage},OU=servers,OU=ahm,OU=projects ",
+          "allowDn": "--allowed-dn CN=ahm-users,OU=ahm,OU=projects "
+        },
+        "customData": {
+          "omsKeyVault": "ahm-shared-dev-kv",
+          "appIdkeyVault": "ahm-automation-dev-kv",
+          "appId": "automate-deploy-client-id",
+          "appIdSecret": "automate-deploy-client-secret",
+          "appIdObject": "automate-deploy-object-id",
+
+          "value": "keyvault={OmsKeyVault}|applicationId={AppId}|servicePrincipal={AppIdObject}|tenantId=6362b077-fb81-4d5b-adf3-129cdb1b56cf|secret={AppIdSecret}"
+        },
+
+        "network": {
+          "batchVnetRg": "ahm-services-westus-rg",
+          "batchVnet": "ahm-services-vnet",
+          "batchSubnet": "ahm-backend-subnet",
+          "batchNodeIps": ["10.44.6.69", "10.44.6.70"],
+
+          "oracleMonIp": "10.44.6.71",
+          "oracleNodeIps": ["10.44.6.72", "10.44.6.73"],
+
+          "webGatewayIp-bak": "10.44.6.6",
+          "webGatewayIp": "10.44.6.37",
+          "webGatewayVnet": "ahm-services-vnet",
+          "webGatewaySubnet": "ahm-appgateway-subnet",
+          "webNodeSubnet": "ahm-application-subnet",
+
+          "opsVnetRg": "ahm-developer-westus-rg",
+          "opsVnet": "ahm-developer-vnet",
+          "opsSubnet": "ahm-prodops-subnet",
+          "chefAutomateIp": "192.168.9.138",
+          "chefServerIp": "192.168.9.139",
+          "jenkinsMstrIp": "192.168.9.140",
+          "jenkinsBldIps": ["192.168.9.141", "192.168.9.142", "192.168.9.143", "192.168.9.144"]
+        }
+
+      }
+    },
+
+    "templateSASKey": {
+      "value": "?sv=2016-05-31&ss=f&srt=co&sp=r&se=2040-04-11T03:50:12Z&st=2017-04-10T19:50:12Z&spr=https&sig=pO6cT9b70Q13HE20FweZ9QxYVW0J22NITOSFug1UINc%3D"
+    },
+
+    "templateUrl": {
+      "value": "https://ahmarmtemplates.file.core.windows.net/templates"
+    }
+
+  }
+}

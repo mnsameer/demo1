@@ -1,0 +1,194 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "nodeName": {
+      "value": null,
+      "type": "string",
+      "metadata": {
+        "description": "Name of the node, i.e. ahm-chef-auto" 
+      }
+    },
+
+    "settings": {
+      "value": null,
+      "type": "object",
+      "metadata": {
+        "description": "Object Containing all of the common settings for AD, api versions, VM Sizing, etc. See the parameters-XXX.json." 
+      }
+    },
+
+    "adCmd": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Active Directory Join Command created by the prepCommon.json template" 
+      }
+    },
+    "customData": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Custom data sent to the VM so the DA chef scripts can connect to OMS" 
+      }
+    },
+
+    "sshKey": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Private SSH key for the ahm admin user that is installed in the id_rsa file" 
+      }
+    },
+
+    "sshPub": {
+      "value": null,
+      "type": "secureString",
+      "metadata": {
+        "description": "Public SSH key for the ahm admin user that is installed in the authorized keys file" 
+      }
+    }
+  },
+
+  "variables": {
+    "imageVHDUri": "[parameters('settings').imageVHDUri]",
+    "image": "[concat(parameters('nodeName'), '-img')]",
+    "osdisk": "[concat(parameters('nodeName'), '-osdisk')]",
+
+    "vmName": "[parameters('nodeName')]",
+    "vmSize": "Standard_DS4_v2",
+
+    "NICName": "[concat(parameters('nodeName'), '-nic1')]",
+
+    "opsVnetRg": "[parameters('settings').network.opsVnetRg]",
+    "opsVnet": "[parameters('settings').network.opsVnet]",
+    "opsSubnet": "[parameters('settings').network.opsSubnet]"
+  },
+
+  "resources": [
+    {
+      "comments": "Create an Image from the specified Baseline vhd",
+      "type": "Microsoft.Compute/images",
+      "name": "[variables('image')]",
+      "apiVersion": "[parameters('settings').apiVersions.compute]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [ ],
+      "properties": {
+        "storageProfile": {
+          "osDisk": {
+            "osType": "Linux",
+            "osState": "Generalized",
+            "blobUri": "[variables('imageVHDUri')]",
+            "caching": "ReadWrite",
+            "storageAccountType": "[parameters('settings').defaultStorageType]"
+          }
+        }
+      }
+    },
+    {
+      "comments": "Network Interface for this chef server node, should be a static IP",
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('NICName')]",
+      "apiVersion": "[parameters('settings').apiVersions.network]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [ ],
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAddress": "[parameters('settings').network.chefAutomateIp]", 
+              "privateIPAllocationMethod": "Static",
+              "subnet": {
+                "id": "[concat(resourceId(variables('opsVnetRg'), 'Microsoft.Network/virtualNetworks', variables('opsVnet')), '/subnets/', variables('opsSubnet'))]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      }
+    },
+    {
+      "comments": "Chef Build Server instances.",
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[variables('vmName')]",
+      "apiVersion": "[parameters('settings').apiVersions.compute]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/images', variables('image'))]",
+        "[resourceId('Microsoft.Network/networkInterfaces', variables('NICName'))]"
+      ],
+      "tags": {
+        "displayName": "VirtualMachine"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[variables('vmSize')]"
+        },
+        "osProfile": {
+          "computerName": "[variables('vmName')]",
+          "adminUsername": "[parameters('settings').adminUsername]",
+
+          "customData": "[parameters('customData')]",
+
+          "linuxConfiguration": {
+            "disablePasswordAuthentication": true,
+            "ssh": {
+              "publicKeys": [
+                {
+                  "path": "[concat('/home/', parameters('settings').adminUsername, '/.ssh/authorized_keys')]",
+                  "keyData": "[parameters('sshPub')]"
+                }
+              ]
+            }
+          }
+        },
+        "storageProfile": {
+          "imageReference": {
+            "id": "[resourceId('Microsoft.Compute/images', variables('image'))]"
+          },
+          "osDisk": {
+            "name": "[variables('osdisk')]",
+            "osType": "Linux",
+            "caching": "ReadWrite",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "[parameters('settings').defaultStorageType]"
+            }
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('NICName'))]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "comments": "Run the Active Directory join script on bootup",
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('vmName'), '/ADJoinScript')]",
+      "apiVersion": "[parameters('settings').apiVersions.extension]",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+      ],
+      "properties": {
+        "publisher": "Microsoft.Azure.Extensions",
+        "type": "CustomScript",
+        "typeHandlerVersion": "2.0",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+        },
+        "protectedSettings": {
+          "commandToExecute": "[parameters('adCmd')]"
+        }
+      }
+    }
+  ]
+}
